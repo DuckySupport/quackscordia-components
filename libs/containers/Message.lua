@@ -45,12 +45,12 @@ function Message:update(data)
 	local seconds, microseconds = _G.uv.gettimeofday()
 	local now = seconds + (microseconds / 1000000)
 
-	if now - self.createdAt < 0.5 then
+	if now - self.createdAt < 1 then
 		print("yielding :update")
 
 		local co = coroutine.running()
 
-		timer.setTimeout(250, function ()
+		timer.setTimeout(1 - (now - self.createdAt), function ()
 			print("resuming :update")
 			coroutine.resume(co)
 		end)
