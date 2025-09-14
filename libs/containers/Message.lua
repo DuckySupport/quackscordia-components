@@ -47,15 +47,12 @@ function Message:update(data)
 
 	local elapsed = now - self.createdAt
 
-	if elapsed < 1 then
+	if elapsed < 0.25 then
 		local co = coroutine.running()
-		if not co then
-			error("No running coroutine to yield from")
-		end
 
-		local remaining = 1 - elapsed
+		local remaining = 0.25 - elapsed
 		if remaining < 0 then remaining = 0 end
-		
+
 		print("yielding :update for " .. (remaining * 1000) .. "ms")
 
 		timer.setTimeout(remaining * 1000, function()
@@ -65,6 +62,7 @@ function Message:update(data)
 
 		coroutine.yield()
 	end
+
 
 	if data.file then
 		files, err = parseFile(data.file)
