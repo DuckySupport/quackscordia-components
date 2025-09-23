@@ -47,10 +47,10 @@ function Message:update(data)
 
 	local elapsed = now - self.createdAt
 
-	if elapsed < 0.25 then
+	if elapsed < 0.6 then
 		local co = coroutine.running()
 
-		local remaining = 0.25 - elapsed
+		local remaining = 0.6 - elapsed
 		if remaining < 0 then remaining = 0 end
 
 		print("yielding :update for " .. (remaining * 1000) .. "ms")
