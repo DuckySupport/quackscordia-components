@@ -3,7 +3,7 @@ local resolver = require("resolver")
 local discordia = require("discordia")
 
 local classes = discordia.class.classes
-local fromISO = discordia.Time.fromISO
+local fromISO = discordia.Date.fromISO
 local rawComponents = resolver.rawComponents
 
 ---The Discordia Message class patched to include additional features.
