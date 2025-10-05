@@ -3,6 +3,7 @@ local resolver = require("resolver")
 local discordia = require("discordia")
 
 local classes = discordia.class.classes
+local fromISO = discordia.Time.fromISO
 local rawComponents = resolver.rawComponents
 
 ---The Discordia Message class patched to include additional features.
@@ -45,7 +46,7 @@ function Message:update(data)
 	local seconds, microseconds = _G.uv.gettimeofday()
 	local now = seconds + (microseconds / 1000000)
 
-	local elapsed = now - self.createdAt
+	local elapsed = now - ((self.editedTimestamp and fromISO(self.editedTimestamp) and fromISO(self.editedTimestamp):toSeconds()) or self.createdAt)
 
 	if elapsed < 0.6 then
 		local pause = 0.6 - elapsed
