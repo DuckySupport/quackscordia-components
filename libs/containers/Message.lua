@@ -72,8 +72,7 @@ function Message:update(data)
 	end
 
 	if type(data.embed) == 'table' then
-		data.embeds = data.embeds or {}
-		table.insert(data.embeds, data.embed)
+		data.embeds = {data.embed}
 	end
 
 	local components = data.components and rawComponents(data.components)
