@@ -72,7 +72,6 @@ function Message:update(data)
 	end
 
 	if type(data.embed) == 'table' then
-		self._embeds = {}
 		data.embeds = {data.embed}
 	end
 
