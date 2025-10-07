@@ -71,14 +71,11 @@ function Message:update(data)
 		end
 	end
 
-	if type(data.embed) == 'table' then
-		data.embeds = {data.embed}
-	end
-
 	local components = data.components and rawComponents(data.components)
 
 	return self:_modify({
 		content = data.content or null,
+		embed = data.embed or null,
 		embeds = data.embeds or null,
 		components = components or {},
 		allowed_mentions = {
