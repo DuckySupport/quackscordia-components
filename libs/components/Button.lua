@@ -28,7 +28,7 @@ function Button:__init(data, actionRow)
   data = self._validate(data, actionRow) or {}
 
   -- Only one of the two fields must be supplied
-  local id, url = data.id or data.custom_id, data.url
+  local id, url = data.id, data.url
   if (id and url) or (not id and not url) then
     error("either one of id/url fields must be supplied")
   end
