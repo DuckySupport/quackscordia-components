@@ -24,6 +24,7 @@ local SelectMenu = class("SelectMenu", Component)
 function SelectMenu:__init(data)
   -- Validate input into appropriate structure
   data = self._validate(data)
+  data.id = data.id or data.custom_id
   assert(data.id, "an id must be supplied")
   -- Make sure options structure always exists
   if not data.options then
