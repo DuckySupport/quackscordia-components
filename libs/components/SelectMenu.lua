@@ -33,6 +33,9 @@ function SelectMenu:__init(data)
   -- Make sure type is always set correctly
   if type(data.type) == "string" then
     data.type = assert(componentType[data.type .. "Select"], "type can only be string, role, user, channel or mentionable")
+    if data.type == 8 then
+      data.channel_types = {0, 5}
+    end
   end
 
   -- Base constructor initializing
