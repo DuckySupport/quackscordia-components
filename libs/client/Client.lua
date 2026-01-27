@@ -11,7 +11,7 @@ local interactionType = discordia.enums.interactionType
 ---<!tag:patch>
 local Client = classes.Client
 
-local function buildPredicate(msg, typ, id, predicate)
+local function buildPredicate(msg, typ, id, userid, predicate)
   predicate = type(predicate) == "function" and predicate or false
   return function(inter, ...)
     return
@@ -23,6 +23,8 @@ local function buildPredicate(msg, typ, id, predicate)
       and (not typ or typ == inter.data.component_type)
       -- does component id match user provided one if any?
       and (not id or id == inter.data.custom_id)
+      -- is the user the one we're looking for, if provided?
+      and (inter.user.id == (userid or inter.user.id))
       -- is user provided predicate satisfied if any?
       and (not predicate or predicate(inter, ...))
   end
@@ -44,14 +46,13 @@ end
 ---@param predicate? function
 ---@return boolean
 ---@return ...
-function Client:waitComponent(msg, typ, id, timeout, predicate)
+function Client:waitComponent(msg, typ, id, userid, timeout, predicate)
   if msg then
-    assert(#msg._components > 0, "Cannot wait for components on a message that does not even contain any components")
     assert(msg.author == msg.client.user, "Cannot wait for components on a message not owned by this bot client")
   end
 
   typ = type(typ) == "number" and typ or componentType[typ]
-  predicate = buildPredicate(msg, typ, id, predicate)
+  predicate = buildPredicate(msg, typ, id, userid, predicate)
 
   return self:waitFor("interactionCreate", timeout, predicate)
 end

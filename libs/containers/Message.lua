@@ -41,51 +41,51 @@ end
 ---@return boolean
 ---<!tag:http>
 function Message:update(data)
-	local files, err
+        local files, err
 
-	local seconds, microseconds = _G.uv.gettimeofday()
-	local now = seconds + (microseconds / 1000000)
+        local seconds, microseconds = _G.uv.gettimeofday()
+        local now = seconds + (microseconds / 1000000)
 
-	local elapsed = now - ((self.editedTimestamp and fromISO(self.editedTimestamp) and fromISO(self.editedTimestamp):toSeconds()) or self.createdAt)
+        local elapsed = now - ((self.editedTimestamp and fromISO(self.editedTimestamp) and fromISO(self.editedTimestamp):toSeconds()) or self.createdAt)
 
-	if elapsed < 0.6 then
-		local pause = 0.6 - elapsed
-		if pause < 0 then pause = 0 end
-		timer.sleep(pause * 1000)
-	end
+        if elapsed < 0.6 then
+                local pause = 0.6 - elapsed
+                if pause < 0 then pause = 0 end
+                timer.sleep(pause * 1000)
+        end
 
 
-	if data.file then
-		files, err = parseFile(data.file)
-		if err then
-			return nil, err
-		end
-	end
+        if data.file then
+                files, err = parseFile(data.file)
+                if err then
+                        return nil, err
+                end
+        end
 
-	if type(data.files) == 'table' then
-		for _, file in ipairs(data.files) do
-			files, err = parseFile(file, files)
-			if err then
-				return nil, err
-			end
-		end
-	end
+        if type(data.files) == 'table' then
+                for _, file in ipairs(data.files) do
+                        files, err = parseFile(file, files)
+                        if err then
+                                return nil, err
+                        end
+                end
+        end
 
-	if type(data.embed) == 'table' then
-		data.embeds = {data.embed}
-	end
+        if type(data.embed) == 'table' then
+                data.embeds = {data.embed}
+        end
 
-	local components = data.components and rawComponents(data.components)
+        local components = data.components and rawComponents(data.components)
 
-	return self:_modify({
-		content = data.content or null,
-		embeds = data.embeds or null,
-		components = components or {},
-		allowed_mentions = {
-			parse = {'users', 'roles', 'everyone'},
-			replied_user = not not self._reply_target,
-		}
-	}, files)
+        return self:_modify({
+                content = data.content or null,
+                embeds = data.embeds or null,
+                components = components or {},
+                allowed_mentions = {
+                        parse = {'users', 'roles', 'everyone'},
+                        replied_user = not not self._reply_target,
+                }
+        }, files)
 end
 
 ---<!ignore>

@@ -11,16 +11,13 @@ local utils = require("utils")
 local errorf = utils.errorf
 local remove = table.remove
 
----A container class constructed by the library to store components data
----for action row validation and caching purposes.
----@class ComponentsContainer
 local ComponentsContainer = class("ComponentsContainer")
 
 ---<!ignore>
 ---Return the component index that matches the provided id in table `tbl`.
 ---@param tbl table
 ---@param id string
----@return number?
+---@return number
 local function findComponent(tbl, id)
   for i = 1, #tbl do
     if tbl[i].id == id then return i end
@@ -36,7 +33,7 @@ local function toCamelCase(str)
 end
 
 function ComponentsContainer:__init(data)
-  assert(data, "argument data is required when initializing ComponentsContainer")
+  assert(data, "argument data is required when initlizing ComponentsContainer")
   self._maxRows = assert(data.maxRows, "expected field data.maxRows")
   self._maxRowCells = assert(data.maxRowCells, "expected field data.maxRowCells")
   self._maxComponents = data.maxComponents or data.maxRows * data.maxRowCells
@@ -68,12 +65,12 @@ function ComponentsContainer:_buildCache()
 end
 
 ---<!ignore>
----Inserts a component into the action row `row`.
+---Registers a component into an action row `row`.
 ---@param row number
 ---@param comp Component
 function ComponentsContainer:_insert(row, comp)
   -- make sure the given row is within limits
-  if row > self._maxRows then
+  if row > self._maxRows then -- row is table?!??!?!
     errorf("Cannot have more than %s action row, got %s rows", 3, self._maxRows, row)
   end
 
@@ -89,9 +86,9 @@ function ComponentsContainer:_insert(row, comp)
     rows.rows_count = rows.rows_count + 1
   end
 
-  -- make sure we have available slot in the row
+  -- make sure we have available place in the row
   row = rows[row]
-  if #row >= self._maxRowCells then
+  if #row > self._maxRowCells then
     errorf("An action row cannot have more than %s component", 3, self._maxRowCells)
   end
 
@@ -112,9 +109,9 @@ function ComponentsContainer:_insert(row, comp)
 end
 
 ---<!ignore>
----Remove a component from this container and action row.
----@param comp_class Component # The class of the component you are removing
----@param id string # The ID of the component to be removed
+---Unregister a component removing it from its action row and cache.
+---@param comp_class Component # The component type as its class
+---@param id string # The ID underwhich this component is registered
 ---@return ComponentsContainer self
 ---@return Component # The removed component.
 function ComponentsContainer:_remove(comp_class, id)
@@ -166,12 +163,7 @@ function ComponentsContainer:_locateRow(comp, target)
   -- if the user has specified a targeted row, check that
   if target then
     if self._rows[target] then
-      local success, err = cb(self._rows[target])
-      if success then
-        return target
-      else
-        return false, err
-      end
+      return cb(self._rows[target]) and target
     else
       return target
     end
@@ -211,7 +203,6 @@ function ComponentsContainer:_buildComponent(comp, data, ...)
   -- can we have the component in an action row?
   local row, err = self:_locateRow(comp, data.actionRow)
   if not row then error(err, 4) end
-  ---@cast row -true
 
   -- create and insert the component into the action row
   -- using isInstance as an optimization for passing an already constructed component
@@ -230,9 +221,10 @@ function ComponentsContainer:removeAllComponents()
   return self
 end
 
----Returns a table of the raw components data the Discord API expects.
----User should never need to use this method.
----You are likely doing something wrong if you are using it directly.
+---Returns a table value of what the raw value Discord would accept is like based on assumptions
+---of the current components.
+---
+---By design, user should never need to use this method.
 ---@return table
 function ComponentsContainer:raw()
   local rows, data = self._rows, {}
@@ -245,7 +237,7 @@ function ComponentsContainer:raw()
   -- iterate all rows to:
   for i = 1, rows.rows_count do
     data[i] = {}
-    -- convert each component in the row into its raw representation
+    -- convert each component in the row into its raw represnation
     for n = 1, #rows[i] do
       data[i][n] = rows[i][n]:raw()
     end

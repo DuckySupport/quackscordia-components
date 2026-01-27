@@ -118,7 +118,7 @@ function getter:disabled()
   return self._data.disabled or false
 end
 
-function getter:actionRow()
+function getter:actionRow(new)
   return self._actionRow
 end
 
