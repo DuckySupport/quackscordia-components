@@ -50,6 +50,8 @@ end
 function Button._validate(data, actionRow)
   if type(data) ~= "table" then
     data = {id = data}
+  else
+    data.id = data.id or data.custom_id
   end
   if actionRow then
     data.actionRow = actionRow
