@@ -49,7 +49,7 @@ function SelectMenu._validate(data)
   if type(data) ~= "table" then
     data = {id = data}
   else
-    data.id = data.id or data.custom_id
+    data._id = data.id or data.custom_id
   end
   return data
 end
