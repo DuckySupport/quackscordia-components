@@ -81,7 +81,6 @@ function Message:update(data)
                 content = data.content or null,
                 embeds = data.embeds or null,
                 components = components or {},
-                flags = data.flags,
                 allowed_mentions = {
                         parse = {'users', 'roles', 'everyone'},
                         replied_user = not not self._reply_target,
