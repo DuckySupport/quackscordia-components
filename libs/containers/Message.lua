@@ -77,13 +77,14 @@ function Message:update(data)
         end
 
         local components = data.components and rawComponents(data.components)
-        local isComponentsV2 = data.flags and bit.band(data.flags, bit.lshift(1, 15)) ~= 0
+        local flags = data.flags or self.flags
+        local isComponentsV2 = flags and bit.band(flags, bit.lshift(1, 15)) ~= 0
 
         return self:_modify({
                 content = data.content or null,
                 embeds = not isComponentsV2 and (data.embeds or null) or nil,
                 components = components or {},
-                flags = data.flags,
+                flags = flags,
                 allowed_mentions = {
                         parse = {'users', 'roles', 'everyone'},
                         replied_user = not not self._reply_target,
