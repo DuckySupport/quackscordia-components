@@ -1,6 +1,5 @@
 local null = require("json").null
 local resolver = require("resolver")
-local bit = require("bit")
 local discordia = require("discordia")
 
 local classes = discordia.class.classes
@@ -77,11 +76,10 @@ function Message:update(data)
         end
 
         local components = data.components and rawComponents(data.components)
-        local isComponentsV2 = data.flags and bit.band(data.flags, bit.lshift(1, 15)) ~= 0
 
         return self:_modify({
                 content = data.content or null,
-                embeds = not isComponentsV2 and (data.embeds or null) or nil,
+                embeds = data.embeds or null,
                 components = components or {},
                 flags = data.flags,
                 allowed_mentions = {
